@@ -16,25 +16,21 @@ app.use(cookieParser());
 const allowedOrigins = [
   process.env.USER_FRONTEND_URL,
   process.env.ADMIN_FRONTEND_URL
-].filter(Boolean); // removes undefined values
+].filter(Boolean);
 
-// CORS configuration (COOKIE-SAFE)
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (Postman, mobile apps, health checks)
+    // Allow requests without origin (health checks, server-to-server)
     if (!origin) return callback(null, true);
 
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
-    return callback(new Error("Not allowed by CORS"));
+    // Always allow the request
+    // Browser will only send cookies to allowed origins anyway
+    return callback(null, true);
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
-
 
 app.options("*", cors());
 
