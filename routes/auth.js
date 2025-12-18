@@ -62,16 +62,15 @@ router.post("/google", async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    // ✅ SET HttpOnly COOKIE
+    // ✅ SET HttpOnly COOKIE (PRODUCTION SAFE)
     res.cookie("userAccessToken", jwtToken, {
-  httpOnly: true,
-  secure: true,
-sameSite: "none",
-  maxAge: 7 * 24 * 60 * 60 * 1000
-});
+      httpOnly: true,
+      secure: true,       // REQUIRED on Render / HTTPS
+      sameSite: "none",   // REQUIRED for cross-origin cookies
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
 
-
-    // ✅ Return ONLY user data
+    // ✅ Return ONLY user data (NO TOKEN)
     res.json({
       user: {
         id: user._id,
@@ -92,14 +91,23 @@ sameSite: "none",
 });
 
 /* ================================
-   User Logout
+   User Logout (FIXED)
 ================================ */
 router.post("/logout", (req, res) => {
-  res.clearCookie("userAccessToken");
-  res.clearCookie("adminAccessToken");
+  // ✅ MUST match cookie attributes exactly
+  res.clearCookie("userAccessToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none"
+  });
+
+  res.clearCookie("adminAccessToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none"
+  });
+
   res.json({ message: "Logged out successfully" });
 });
-
-
 
 module.exports = router;
