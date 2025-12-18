@@ -70,8 +70,18 @@ router.post('/submit-solution', authenticateUser, async (req, res) => {
   try {
     const { submissionId } = req.body;
 
+    // ✅ Basic presence check
     if (!submissionId) {
       return res.status(400).json({ error: 'Submission ID is required' });
+    }
+
+    // ✅ STRICT FORMAT VALIDATION
+    // Only digits, length 10–11
+    const submissionIdRegex = /^\d{10,11}$/;
+    if (!submissionIdRegex.test(submissionId)) {
+      return res.status(400).json({
+        error: 'Invalid submission ID format'
+      });
     }
 
     const user = await User.findById(req.userId);
@@ -103,6 +113,7 @@ router.post('/submit-solution', authenticateUser, async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 // Set password (only after verification)
 router.post('/set-password', authenticateUser, async (req, res) => {
