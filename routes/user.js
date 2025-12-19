@@ -124,7 +124,8 @@ router.post('/set-password', authenticateUser, async (req, res) => {
     // - Length: 8 to 13 characters
     // - At least 1 uppercase, 1 lowercase, 1 number, 1 special character
     const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])[A-Za-z\d^A-Za-z0-9]{8,13}$/;
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,13}$/;
+
 
     if (
       typeof password !== "string" ||
@@ -170,7 +171,8 @@ router.post('/change-password', authenticateUser, async (req, res) => {
     // - Length: 8 to 13 characters
     // - At least 1 uppercase, 1 lowercase, 1 number, 1 special character
     const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])[A-Za-z\d^A-Za-z0-9]{8,13}$/;
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,13}$/;
+
 
     if (
       typeof newPassword !== "string" ||
