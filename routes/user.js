@@ -120,9 +120,19 @@ router.post('/set-password', authenticateUser, async (req, res) => {
   try {
     const { password } = req.body;
 
-    if (!password || password.length < 6) {
+    // ✅ STRICT PASSWORD POLICY
+    // - Length: 8 to 13 characters
+    // - At least 1 uppercase, 1 lowercase, 1 number, 1 special character
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])[A-Za-z\d^A-Za-z0-9]{8,13}$/;
+
+    if (
+      typeof password !== "string" ||
+      !passwordRegex.test(password)
+    ) {
       return res.status(400).json({
-        error: 'Password must be at least 6 characters'
+        error:
+          "Password must be 8–13 characters and include uppercase, lowercase, number, and special character"
       });
     }
 
@@ -135,6 +145,7 @@ router.post('/set-password', authenticateUser, async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
     user.password = hashedPassword;
     user.passwordSet = true;
     user.updatedAt = new Date();
@@ -149,14 +160,25 @@ router.post('/set-password', authenticateUser, async (req, res) => {
   }
 });
 
+
 // Change password (only for verified users)
 router.post('/change-password', authenticateUser, async (req, res) => {
   try {
     const { newPassword } = req.body;
 
-    if (!newPassword || newPassword.length < 6) {
+    // ✅ STRICT PASSWORD POLICY
+    // - Length: 8 to 13 characters
+    // - At least 1 uppercase, 1 lowercase, 1 number, 1 special character
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])[A-Za-z\d^A-Za-z0-9]{8,13}$/;
+
+    if (
+      typeof newPassword !== "string" ||
+      !passwordRegex.test(newPassword)
+    ) {
       return res.status(400).json({
-        error: 'New password must be at least 6 characters'
+        error:
+          "Password must be 8–13 characters and include uppercase, lowercase, number, and special character"
       });
     }
 
@@ -175,6 +197,7 @@ router.post('/change-password', authenticateUser, async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
+
     user.password = hashedPassword;
     user.passwordSet = true;
     user.updatedAt = new Date();
@@ -188,6 +211,7 @@ router.post('/change-password', authenticateUser, async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 // Delink CodeChef username
 router.post('/delink-codechef', authenticateUser, async (req, res) => {
